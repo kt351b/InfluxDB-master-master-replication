@@ -59,7 +59,7 @@ for measurements in points:
     nametype = dbClient.query("show field keys FROM %s" % (measurements['name']))
     points2 = nametype.get_points()
     for i in points2:
-       if measurements.get('name') == "process_status" and re.search(r'^running_', i.get('fieldKey')):
+        if measurements.get('name') == "process_status" and re.search(r'^running_', i.get('fieldKey')):
             key_type = '%s::integer'%(i.get('fieldKey'))
             copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
         elif measurements.get('name') == "processes" and i.get('fieldKey') == "running":

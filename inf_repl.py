@@ -26,7 +26,6 @@ db_dest = '127.0.0.1:8088'
 # sudo rm -r /tmp/mysnapshot/*
 # create folder if not exist
 def clear_folder(fold):
-    #files = glob.glob('/tmp/mysnapshot/')
     if not os.path.isdir(fold):
         os.mkdir(fold,700)
     files = glob.glob(fold + "*")
@@ -60,47 +59,19 @@ for measurements in points:
     nametype = dbClient.query("show field keys FROM %s" % (measurements['name']))
     points2 = nametype.get_points()
     for i in points2:
-#        if measurements.get('name') == "process_status" and re.search(r'^running$', i.get('fieldKey')):
-            key_type = '%s::float'%(i.get('fieldKey'))
-#            key_type = '%s::integer'%(i.get('fieldKey'))
-            print("measurement.name =  ", measurements.get('name'))
-            print("fieldkey=", key_type)
-            print("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
-            copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
-        elif measurements.get('name') == "process_status" and re.search(r'^running_', i.get('fieldKey')):
-#            key_type = '%s::float'%(i.get('fieldKey'))
+       if measurements.get('name') == "process_status" and re.search(r'^running_', i.get('fieldKey')):
             key_type = '%s::integer'%(i.get('fieldKey'))
-            print("measurement.name =  ", measurements.get('name'))
-            print("fieldkey=", key_type)
-            print("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
             copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
         elif measurements.get('name') == "processes" and i.get('fieldKey') == "running":
-#            #if i.get('fieldKey') == "running":
-#            key_type = '%s::float'%(i.get('fieldKey'))
             key_type = '%s::integer'%(i.get('fieldKey'))
-#            key_type = '%s'%(i.get('fieldKey'))
-            print("measurement.name =  ", measurements.get('name'))
-            print("fieldkey=", key_type)
-            #list_of_keys.append(key_type) 
-            print("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
             copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
-##            print("processes = ", key_type)
-
-        if measurements.get('name') == "swap" and i.get('fieldKey') == "in":
+        elif measurements.get('name') == "swap" and i.get('fieldKey') == "in":
             print("IN")
             key_type = '"%s"'%(i.get('fieldKey'))
-#            key_type = '%s::integer'%(i.get('fieldKey'))
-            print("measurement.name =  ", measurements.get('name'))
-            print("fieldkey=", key_type)
-            print("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
             copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
         else:
             key_type = '%s::%s'%(i.get('fieldKey'),i.get('fieldType'))
     #        #list_of_keys.append(key_type) 
-            print("measurement.name =  ", measurements.get('name'))
-            print("fieldkey=", key_type)
-            #list_of_keys.append(key_type) 
-            print("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
             copy_DB = dbClient.query("SELECT %s INTO telegraf..:MEASUREMENT FROM %s GROUP BY *" % (key_type, measurements.get('name')))
 
 ##        print(', '.join(list_of_keys))
